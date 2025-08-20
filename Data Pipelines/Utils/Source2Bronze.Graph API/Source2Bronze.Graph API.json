@@ -199,7 +199,7 @@
             },
             "UrlParameter": {
                 "type": "string",
-                "defaultValue": "beta/reports/getEmailActivityUserDetail(period='D7')?format=application/json&$top=200"
+                "defaultValue": "beta/users?format=application/json&$top=200"
             },
             "targetFilePath": {
                 "type": "string",
