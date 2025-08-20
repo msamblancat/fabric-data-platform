@@ -207,32 +207,11 @@
             },
             "OutputFinalFileName": {
                 "type": "string",
-                "defaultValue": "EmailActivityUserDetail_20250819.json"
+                "defaultValue": "UsersExtract_20250819.json"
             },
             "requestIntervalms": {
                 "type": "int",
                 "defaultValue": 5000
-            }
-        },
-        "variables": {
-            "hasNextPage": {
-                "type": "Boolean",
-                "defaultValue": true
-            },
-            "nextFileId": {
-                "type": "Integer",
-                "defaultValue": 0
-            },
-            "tmpFileId": {
-                "type": "Integer",
-                "defaultValue": 0
-            },
-            "FileName": {
-                "type": "String"
-            },
-            "NextURLRequest": {
-                "type": "String",
-                "defaultValue": "https://graph.microsoft.com/v1.0/users?$top=999&$select=displayName, userPrincipalName,state, department, mail"
             }
         },
         "lastModifiedByObjectId": "05bb1a02-de93-43ba-810f-f2b22d348efd",
