@@ -1,1 +1,241 @@
-{"$schema":"http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#","contentVersion":"1.0.0.0","parameters":{"Graph API":{"type":"string"},"Lakehouse":{"type":"string"}},"variables":{},"resources":[{"name":"Source2Bronze.Graph API","type":"pipelines","apiVersion":"2018-06-01","properties":{"activities":[{"name":"If Debug","type":"IfCondition","dependsOn":[],"typeProperties":{"expression":{"value":"@pipeline().parameters.isDebug","type":"Expression"},"ifFalseActivities":[{"name":"Copy data","type":"Copy","dependsOn":[],"policy":{"timeout":"0.12:00:00","retry":3,"retryIntervalInSeconds":600,"secureOutput":false,"secureInput":false},"typeProperties":{"source":{"type":"RestSource","httpRequestTimeout":"00:05:00","requestInterval":{"value":"@{pipeline().parameters.requestIntervalms}","type":"Expression"},"requestMethod":"GET","paginationRules":{"supportRFC5988":"true","AbsoluteUrl":"$['@odata.nextLink']"},"datasetSettings":{"annotations":[],"type":"RestResource","typeProperties":{"relativeUrl":{"value":"@pipeline().parameters.UrlParameter","type":"Expression"}},"schema":[],"externalReferences":{"connection":"[parameters('Graph API')]"}}},"sink":{"type":"JsonSink","storeSettings":{"type":"LakehouseWriteSettings","copyBehavior":"MergeFiles","blockSizeInMB":50},"formatSettings":{"type":"JsonWriteSettings","filePattern":"arrayOfObjects"},"datasetSettings":{"annotations":[],"linkedService":{"name":"Lakehouse","properties":{"annotations":[],"type":"Lakehouse","typeProperties":{"workspaceId":"000000-6d36-4f5f-8b8a-dfafa8532c3a","artifactId":"[parameters('Lakehouse')]","rootFolder":"Files","servicePrincipalCredential":{"type":"SecureString","value":"**********"}}}},"type":"Json","typeProperties":{"location":{"type":"LakehouseLocation","fileName":{"value":"@pipeline().parameters.OutputFinalFileName","type":"Expression"},"folderPath":{"value":"@pipeline().parameters.targetFilePath","type":"Expression"}}},"schema":{}}},"enableStaging":false}}],"ifTrueActivities":[{"name":"Copy data debug","type":"Copy","dependsOn":[],"policy":{"timeout":"0.12:00:00","retry":3,"retryIntervalInSeconds":90,"secureOutput":false,"secureInput":false},"typeProperties":{"source":{"type":"RestSource","httpRequestTimeout":"00:05:00","requestInterval":{"value":"@{pipeline().parameters.requestIntervalms}","type":"Expression"},"requestMethod":"GET","datasetSettings":{"annotations":[],"type":"RestResource","typeProperties":{"relativeUrl":{"value":"@pipeline().parameters.UrlParameter","type":"Expression"}},"schema":[],"externalReferences":{"connection":"[parameters('Graph API')]"}}},"sink":{"type":"DelimitedTextSink","storeSettings":{"type":"LakehouseWriteSettings"},"formatSettings":{"type":"DelimitedTextWriteSettings","fileExtension":".txt"},"datasetSettings":{"annotations":[],"linkedService":{"name":"Lakehouse","properties":{"annotations":[],"type":"Lakehouse","typeProperties":{"workspaceId":"000000-6d36-4f5f-8b8a-dfafa8532c3a","artifactId":"[parameters('Lakehouse')]","rootFolder":"Files","servicePrincipalCredential":{"type":"SecureString","value":"**********"}}}},"type":"DelimitedText","typeProperties":{"location":{"type":"LakehouseLocation","fileName":"@pipeline().parameters.OutputFinalFileName","folderPath":"@pipeline().parameters.targetFilePath"},"columnDelimiter":",","escapeChar":"\\","firstRowAsHeader":true,"quoteChar":"\""},"schema":[]}},"enableStaging":false,"translator":{"type":"TabularTranslator","typeConversion":true,"typeConversionSettings":{"allowDataTruncation":true,"treatBooleanAsNumber":false},"columnFlattenSettings":{"treatArrayAsString":false,"treatStructAsString":false,"flattenColumnDelimiter":"."}}}}]}}],"parameters":{"isDebug":{"type":"bool","defaultValue":false},"UrlParameter":{"type":"string","defaultValue":"beta/reports/getEmailActivityUserDetail(period='D7')?format=application/json&$top=200"},"targetFilePath":{"type":"string","defaultValue":"bronze"},"OutputFinalFileName":{"type":"string","defaultValue":"EmailActivityUserDetail_20250819.json"},"requestIntervalms":{"type":"int","defaultValue":5000}},"variables":{"hasNextPage":{"type":"Boolean","defaultValue":true},"nextFileId":{"type":"Integer","defaultValue":0},"tmpFileId":{"type":"Integer","defaultValue":0},"FileName":{"type":"String"},"NextURLRequest":{"type":"String","defaultValue":"https://graph.microsoft.com/v1.0/users?$top=999&$select=displayName, userPrincipalName,state, department, mail"}},"lastModifiedByObjectId":"05bb1a02-de93-43ba-810f-f2b22d348efd","lastPublishTime":"2025-08-20T10:39:51Z"},"dependsOn":[]}]}
+{
+    "name": "Source2Bronze.Graph API",
+    "objectId": "d095c632-f241-44a9-b5a8-0af4fc9307b0",
+    "properties": {
+        "activities": [
+            {
+                "name": "If Debug",
+                "type": "IfCondition",
+                "dependsOn": [],
+                "typeProperties": {
+                    "expression": {
+                        "value": "@pipeline().parameters.isDebug",
+                        "type": "Expression"
+                    },
+                    "ifFalseActivities": [
+                        {
+                            "name": "Copy data",
+                            "type": "Copy",
+                            "dependsOn": [],
+                            "policy": {
+                                "timeout": "0.12:00:00",
+                                "retry": 3,
+                                "retryIntervalInSeconds": 600,
+                                "secureOutput": false,
+                                "secureInput": false
+                            },
+                            "typeProperties": {
+                                "source": {
+                                    "type": "RestSource",
+                                    "httpRequestTimeout": "00:05:00",
+                                    "requestInterval": {
+                                        "value": "@{pipeline().parameters.requestIntervalms}",
+                                        "type": "Expression"
+                                    },
+                                    "requestMethod": "GET",
+                                    "paginationRules": {
+                                        "supportRFC5988": "true",
+                                        "AbsoluteUrl": "$['@odata.nextLink']"
+                                    },
+                                    "datasetSettings": {
+                                        "annotations": [],
+                                        "type": "RestResource",
+                                        "typeProperties": {
+                                            "relativeUrl": {
+                                                "value": "@pipeline().parameters.UrlParameter",
+                                                "type": "Expression"
+                                            }
+                                        },
+                                        "schema": [],
+                                        "externalReferences": {
+                                            "connection": "868aa9cb-eba8-4f69-80a7-ad12ad872452"
+                                        }
+                                    }
+                                },
+                                "sink": {
+                                    "type": "JsonSink",
+                                    "storeSettings": {
+                                        "type": "LakehouseWriteSettings",
+                                        "copyBehavior": "MergeFiles",
+                                        "blockSizeInMB": 50
+                                    },
+                                    "formatSettings": {
+                                        "type": "JsonWriteSettings",
+                                        "filePattern": "arrayOfObjects"
+                                    },
+                                    "datasetSettings": {
+                                        "annotations": [],
+                                        "linkedService": {
+                                            "name": "Lakehouse",
+                                            "properties": {
+                                                "annotations": [],
+                                                "type": "Lakehouse",
+                                                "typeProperties": {
+                                                    "workspaceId": "00000-6d36-4f5f-8b8a-dfafa8532c3a",
+                                                    "artifactId": "a9d40291-7008-4aae-8e6d-5d10ae79f1fb",
+                                                    "rootFolder": "Files"
+                                                }
+                                            }
+                                        },
+                                        "type": "Json",
+                                        "typeProperties": {
+                                            "location": {
+                                                "type": "LakehouseLocation",
+                                                "fileName": {
+                                                    "value": "@pipeline().parameters.OutputFinalFileName",
+                                                    "type": "Expression"
+                                                },
+                                                "folderPath": {
+                                                    "value": "@pipeline().parameters.targetFilePath",
+                                                    "type": "Expression"
+                                                }
+                                            }
+                                        },
+                                        "schema": {}
+                                    }
+                                },
+                                "enableStaging": false
+                            }
+                        }
+                    ],
+                    "ifTrueActivities": [
+                        {
+                            "name": "Copy data debug",
+                            "type": "Copy",
+                            "dependsOn": [],
+                            "policy": {
+                                "timeout": "0.12:00:00",
+                                "retry": 3,
+                                "retryIntervalInSeconds": 90,
+                                "secureOutput": false,
+                                "secureInput": false
+                            },
+                            "typeProperties": {
+                                "source": {
+                                    "type": "RestSource",
+                                    "httpRequestTimeout": "00:05:00",
+                                    "requestInterval": {
+                                        "value": "@{pipeline().parameters.requestIntervalms}",
+                                        "type": "Expression"
+                                    },
+                                    "requestMethod": "GET",
+                                    "datasetSettings": {
+                                        "annotations": [],
+                                        "type": "RestResource",
+                                        "typeProperties": {
+                                            "relativeUrl": {
+                                                "value": "@pipeline().parameters.UrlParameter",
+                                                "type": "Expression"
+                                            }
+                                        },
+                                        "schema": [],
+                                        "externalReferences": {
+                                            "connection": "868aa9cb-eba8-4f69-80a7-ad12ad872452"
+                                        }
+                                    }
+                                },
+                                "sink": {
+                                    "type": "DelimitedTextSink",
+                                    "storeSettings": {
+                                        "type": "LakehouseWriteSettings"
+                                    },
+                                    "formatSettings": {
+                                        "type": "DelimitedTextWriteSettings",
+                                        "fileExtension": ".txt"
+                                    },
+                                    "datasetSettings": {
+                                        "annotations": [],
+                                        "linkedService": {
+                                            "name": "Lakehouse",
+                                            "properties": {
+                                                "annotations": [],
+                                                "type": "Lakehouse",
+                                                "typeProperties": {
+                                                    "workspaceId": "00000-6d36-4f5f-8b8a-dfafa8532c3a",
+                                                    "artifactId": "a9d40291-7008-4aae-8e6d-5d10ae79f1fb",
+                                                    "rootFolder": "Files"
+                                                }
+                                            }
+                                        },
+                                        "type": "DelimitedText",
+                                        "typeProperties": {
+                                            "location": {
+                                                "type": "LakehouseLocation",
+                                                "fileName": "@pipeline().parameters.OutputFinalFileName",
+                                                "folderPath": "@pipeline().parameters.targetFilePath"
+                                            },
+                                            "columnDelimiter": ",",
+                                            "escapeChar": "\\",
+                                            "firstRowAsHeader": true,
+                                            "quoteChar": "\""
+                                        },
+                                        "schema": []
+                                    }
+                                },
+                                "enableStaging": false,
+                                "translator": {
+                                    "type": "TabularTranslator",
+                                    "typeConversion": true,
+                                    "typeConversionSettings": {
+                                        "allowDataTruncation": true,
+                                        "treatBooleanAsNumber": false
+                                    },
+                                    "columnFlattenSettings": {
+                                        "treatArrayAsString": false,
+                                        "treatStructAsString": false,
+                                        "flattenColumnDelimiter": "."
+                                    }
+                                }
+                            }
+                        }
+                    ]
+                }
+            }
+        ],
+        "parameters": {
+            "isDebug": {
+                "type": "bool",
+                "defaultValue": false
+            },
+            "UrlParameter": {
+                "type": "string",
+                "defaultValue": "beta/reports/getEmailActivityUserDetail(period='D7')?format=application/json&$top=200"
+            },
+            "targetFilePath": {
+                "type": "string",
+                "defaultValue": "bronze"
+            },
+            "OutputFinalFileName": {
+                "type": "string",
+                "defaultValue": "EmailActivityUserDetail_20250819.json"
+            },
+            "requestIntervalms": {
+                "type": "int",
+                "defaultValue": 5000
+            }
+        },
+        "variables": {
+            "hasNextPage": {
+                "type": "Boolean",
+                "defaultValue": true
+            },
+            "nextFileId": {
+                "type": "Integer",
+                "defaultValue": 0
+            },
+            "tmpFileId": {
+                "type": "Integer",
+                "defaultValue": 0
+            },
+            "FileName": {
+                "type": "String"
+            },
+            "NextURLRequest": {
+                "type": "String",
+                "defaultValue": "https://graph.microsoft.com/v1.0/users?$top=999&$select=displayName, userPrincipalName,state, department, mail"
+            }
+        },
+        "lastModifiedByObjectId": "05bb1a02-de93-43ba-810f-f2b22d348efd",
+        "lastPublishTime": "2025-08-20T10:39:51Z"
+    }
+}
