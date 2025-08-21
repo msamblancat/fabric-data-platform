@@ -1,0 +1,82 @@
+{
+   "$schema":"http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+   "contentVersion":"1.0.0.0",
+   "parameters":{
+      "fabric-data-pipelines":{
+         "type":"string"
+      }
+   },
+   "variables":{
+      
+   },
+   "resources":[
+      {
+         "name":"Extract SQL Tables to Bronze (Parent)",
+         "type":"pipelines",
+         "apiVersion":"2018-06-01",
+         "properties":{
+            "activities":[
+               {
+                  "name":"ForEachTableInArray",
+                  "type":"ForEach",
+                  "dependsOn":[
+                     
+                  ],
+                  "typeProperties":{
+                     "items":{
+                        "value":"@pipeline().parameters.TablesToExtract",
+                        "type":"Expression"
+                     },
+                     "isSequential":true,
+                     "activities":[
+                        {
+                           "name":"Execute SQL Table Extract",
+                           "type":"InvokePipeline",
+                           "dependsOn":[
+                              
+                           ],
+                           "policy":{
+                              "timeout":"0.12:00:00",
+                              "retry":0,
+                              "retryIntervalInSeconds":30,
+                              "secureOutput":false,
+                              "secureInput":false
+                           },
+                           "typeProperties":{
+                              "waitOnCompletion":true,
+                              "operationType":"InvokeFabricPipeline",
+                              "pipelineId":"00000-0000-0000-0000-0000000",
+                              "workspaceId":"00000-0000-0000-0000-0000000",
+                              "parameters":{
+                                 "TableName":{
+                                    "value":"@item()",
+                                    "type":"Expression"
+                                 }
+                              }
+                           },
+                           "externalReferences":{
+                              "connection":"[parameters('fabric-data-pipelines')]"
+                           }
+                        }
+                     ]
+                  }
+               }
+            ],
+            "parameters":{
+               "TablesToExtract":{
+                  "type":"array",
+                  "defaultValue":[
+                     "dbo.table1",
+                     "dbo.table2"
+                  ]
+               }
+            },
+            "lastModifiedByObjectId":"a4b9508e-96d8-4512-9afc-d4c60ced334c",
+            "lastPublishTime":"2025-08-21T10:25:25Z"
+         },
+         "dependsOn":[
+            
+         ]
+      }
+   ]
+}

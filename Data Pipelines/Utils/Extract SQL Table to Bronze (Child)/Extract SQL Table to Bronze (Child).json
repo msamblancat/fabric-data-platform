@@ -1,0 +1,128 @@
+{
+   "$schema":"http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+   "contentVersion":"1.0.0.0",
+   "parameters":{
+      "database":{
+         "type":"string"
+      },
+      "Lakehouse":{
+         "type":"string"
+      }
+   },
+   "variables":{
+      
+   },
+   "resources":[
+      {
+         "name":"Extract SQL Table to Bronze (Child)",
+         "type":"pipelines",
+         "apiVersion":"2018-06-01",
+         "properties":{
+            "activities":[
+               {
+                  "name":"Copy SQL Table to Lakehouse",
+                  "type":"Copy",
+                  "dependsOn":[
+                     
+                  ],
+                  "policy":{
+                     "timeout":"0.12:00:00",
+                     "retry":0,
+                     "retryIntervalInSeconds":30,
+                     "secureOutput":false,
+                     "secureInput":false
+                  },
+                  "typeProperties":{
+                     "source":{
+                        "type":"SqlServerSource",
+                        "queryTimeout":"02:00:00",
+                        "partitionOption":"None",
+                        "datasetSettings":{
+                           "annotations":[
+                              
+                           ],
+                           "type":"SqlServerTable",
+                           "schema":[
+                              
+                           ],
+                           "typeProperties":{
+                              "schema":{
+                                 "value":"@split(pipeline().parameters.TableName, '.')[0]",
+                                 "type":"Expression"
+                              },
+                              "table":{
+                                 "value":"@split(pipeline().parameters.TableName, '.')[1]",
+                                 "type":"Expression"
+                              },
+                              "database":"database"
+                           },
+                           "externalReferences":{
+                              "connection":"[parameters('database connection name')]"
+                           }
+                        }
+                     },
+                     "sink":{
+                        "type":"LakehouseTableSink",
+                        "tableActionOption":"OverwriteSchema",
+                        "partitionOption":"None",
+                        "datasetSettings":{
+                           "annotations":[
+                              
+                           ],
+                           "linkedService":{
+                              "name":"Lakehouse",
+                              "properties":{
+                                 "annotations":[
+                                    
+                                 ],
+                                 "type":"Lakehouse",
+                                 "typeProperties":{
+                                    "workspaceId":"00000-0000-000-000-000000",
+                                    "artifactId":"[parameters('Lakehouse')]",
+                                    "rootFolder":"Tables",
+                                    "servicePrincipalCredential":{
+                                       "type":"SecureString",
+                                       "value":"**********"
+                                    }
+                                 }
+                              }
+                           },
+                           "type":"LakehouseTable",
+                           "schema":[
+                              
+                           ],
+                           "typeProperties":{
+                              "table":{
+                                 "value":"@pipeline().parameters.TableName",
+                                 "type":"Expression"
+                              }
+                           }
+                        }
+                     },
+                     "enableStaging":false,
+                     "translator":{
+                        "type":"TabularTranslator",
+                        "typeConversion":true,
+                        "typeConversionSettings":{
+                           "allowDataTruncation":true,
+                           "treatBooleanAsNumber":false
+                        }
+                     }
+                  }
+               }
+            ],
+            "parameters":{
+               "TableName":{
+                  "type":"string",
+                  "defaultValue":"dbo.table1"
+               }
+            },
+            "lastModifiedByObjectId":"a4b9508e-96d8-4512-9afc-d4c60ced334c",
+            "lastPublishTime":"2025-08-21T10:26:03Z"
+         },
+         "dependsOn":[
+            
+         ]
+      }
+   ]
+}
